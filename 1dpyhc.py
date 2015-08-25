@@ -35,91 +35,73 @@ def f_omega(l):
 
 
 # A,B,C,D, coefficients of the unit cell translation operator
-def ABCD(a, b, n1, n2, omega, beta, pol):
+def ABCD(a, b, n1, n2, omega, beta):
     '''A,B,C,D, coefficients of the unit cell translation operator
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (b is the first thickness)
     'n1,n2'=Refractive index of the unit cell (n2 is the first)
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
     # Wavevectors in each medium
     k1 = sp.sqrt((n1 * omega / c) ** 2 - beta ** 2)
     k2 = sp.sqrt((n2 * omega / c) ** 2 - beta ** 2)
 
-    # A
-    if pol == 0:
-        a_out = np.exp(-1j * k1 * a) * (np.cos(k2 * b) - 0.5 * 1j *
-                                        (k2 / k1 + k1 / k2) * np.sin(k2 * b))
-        b_out = np.exp(1j * k1 * a) * (-0.5 * 1j *
-                                       (k2 / k1 - k1 / k2) * np.sin(k2 * b))
-        c_out = np.exp(-1j * k1 * a) * (0.5 * 1j *
-                                        (k2 / k1 - k1 / k2) * np.sin(k2 * b))
-        d_out = np.exp(1j * k1 * a) * (np.cos(k2 * b) + 0.5 * 1j *
-                                       (k2 / k1 + k1 / k2) * np.sin(k2 * b))
-    else:
-        a_out = np.exp(-1j * k1 * a) * (np.cos(k2 * b) - 0.5 * 1j * ((
-            (n1 ** 2) / (n2 ** 2)) * k2 / k1 + (
-                (n2 ** 2) / (n1 ** 2)) * k1 / k2) * np.sin(k2 * b))
-        b_out = np.exp(1j * k1 * a) * (-0.5 * 1j * ((
-            (n2 ** 2) / (n1 ** 2)) * k1 / k2 - (
-                (n1 ** 2) / (n2 ** 2)) * k2 / k1) * np.sin(k2 * b))
-        c_out = np.exp(-1j * k1 * a) * (0.5 * 1j * ((
-            (n2 ** 2) / (n1 ** 2)) * k1 / k2 - (
-                (n1 ** 2) / (n2 ** 2)) * k2 / k1) * np.sin(k2 * b))
-        d_out = np.exp(1j * k1 * a) * (np.cos(k2 * b) + 0.5 * 1j * ((
-            (n1 ** 2) / (n2 ** 2)) * k2 / k1 + (
-                (n2 ** 2) / (n1 ** 2)) * k1 / k2) * np.sin(k2 * b))
+    # A,B,C,D
+    a_out = np.exp(-1j * k1 * a) * (np.cos(k2 * b) - 0.5 * 1j *
+                                    (k2 / k1 + k1 / k2) * np.sin(k2 * b))
+    b_out = np.exp(1j * k1 * a) * (-0.5 * 1j *
+                                   (k2 / k1 - k1 / k2) * np.sin(k2 * b))
+    c_out = np.exp(-1j * k1 * a) * (0.5 * 1j *
+                                    (k2 / k1 - k1 / k2) * np.sin(k2 * b))
+    d_out = np.exp(1j * k1 * a) * (np.cos(k2 * b) + 0.5 * 1j *
+                                   (k2 / k1 + k1 / k2) * np.sin(k2 * b))
 
     return a_out, b_out, c_out, d_out
 
 
 # |0.5(A+D)-1|, its sign gives allowed and forbidden
 # band, as well as band edges at |0.5(A+D)-1|
-def AD(a, b, n1, n2, omega, beta, pol):
+def AD(a, b, n1, n2, omega, beta):
     '''Evaluates |0.5(A+D)-1| to study the photonic crystal bands
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (b is the first thickness)
     'n1,n2'=Refractive index of the unit cell (n2 is the first)
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
-    A, B, C, D = ABCD(a, b, n1, n2, omega, beta, pol)
+    A, B, C, D = ABCD(a, b, n1, n2, omega, beta)
 
     return np.abs(0.5 * (A + D)) - 1.0
 
 
 # K bloch wavevector
-def f_K(a, b, n1, n2, omega, beta, pol):
+def f_K(a, b, n1, n2, omega, beta):
     '''Evaluates the Bloch wavevector
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (b is the first thickness)
     'n1,n2'=Refractive index of the unit cell (n2 is the first)
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
-    A, B, C, D = ABCD(a, b, n1, n2, omega, beta, pol)
+    A, B, C, D = ABCD(a, b, n1, n2, omega, beta)
 
     return np.arccos(0.5 * (A + D)) / (a + b)
 
 
 # N-unit-cell translation operator
-def f_A(a, b, n1, n2, N, omega, beta, pol):
+def f_A(a, b, n1, n2, N, omega, beta):
     '''Evaluates the N-unit-cell translation operator
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (b is the first thickness)
     'n1,n2'=Refractive index of the unit cell (n2 is the first)
     'N'= number of unit cells
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
     # preliminary calculations
-    A, B, C, D = ABCD(a, b, n1, n2, omega, beta, pol)
-    K = f_K(a, b, n1, n2, omega, beta, pol)
+    A, B, C, D = ABCD(a, b, n1, n2, omega, beta)
+    K = f_K(a, b, n1, n2, omega, beta)
     L = a + b
 
     # matrix elements
@@ -134,13 +116,12 @@ def f_A(a, b, n1, n2, N, omega, beta, pol):
 
 
 # incident medium additional operator
-def f_M(n1, n_inc, omega, beta, pol):
+def f_M(n1, n_inc, omega, beta):
     '''Evaluates the additional operator for the incident medium
 
     args:
     'n1,n_inc'=Refractive index of the unit cell n1 and of the incident medium
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
     # preliminary calculations
     k1 = sp.sqrt((n1 * omega / c) ** 2 - beta ** 2)
@@ -157,70 +138,53 @@ def f_M(n1, n_inc, omega, beta, pol):
     # print 'k_inc',k_inc
 
     # matrix elements
-    if pol == 0:
-        M11 = 0.5 * (1.0 + k1 / k_inc)
-        M12 = 0.5 * (1.0 - k1 / k_inc)
-        M21 = 0.5 * (1.0 - k1 / k_inc)
-        M22 = 0.5 * (1.0 + k1 / k_inc)
-    else:
-        M11 = 0.5 * (1.0 + ((n_inc ** 2) / (n1 ** 2)) * k1 / k_inc)
-        M12 = 0.5 * (1.0 - ((n_inc ** 2) / (n1 ** 2)) * k1 / k_inc)
-        M21 = 0.5 * (1.0 - ((n_inc ** 2) / (n1 ** 2)) * k1 / k_inc)
-        M22 = 0.5 * (1.0 + ((n_inc ** 2) / (n1 ** 2)) * k1 / k_inc)
+    M11 = 1.0 + k1 / k_inc
+    M12 = 1.0 - k1 / k_inc
+    M21 = 1.0 - k1 / k_inc
+    M22 = 1.0 + k1 / k_inc
 
     # print 'M11,M12,M21,M22',M11,M12,M21,M22
 
-    return np.array([[M11, M12], [M21, M22]])
+    return 0.5 * np.array([[M11, M12], [M21, M22]])
 
 
 # substrate medium additional operator
-def f_N(a, n1, n_sub, omega, beta, pol):
+def f_N(a, b, n1, n_sub, omega, beta):
     '''Evaluates additional operator for the substrate
 
     args:
-    'a'=Thicknesses of the 1D unit cell (b is the first thickness, a the second)
+    'a,b'=Thicknesses of the 1D unit cell (b is the first thickness, a the second)
     'n1,n_sub'=Refractive index of the unit cell (n2 is the first, n1 the second) and of the substrate
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
     # preliminary calculations
     k1 = sp.sqrt((n1 * omega / c) ** 2 - beta ** 2)
     k_sub = sp.sqrt((n_sub * omega / c) ** 2 - beta ** 2)
+    L = a + b
 
-    # matrix elements
-    if pol == 0:
-        N11 = 0.5 * sp.exp(1j * (k1 - k_sub) * a) * (1.0 + k1 / k_sub)
-        N12 = 0.5 * sp.exp(1j * (k1 + k_sub) * a) * (1.0 - k1 / k_sub)
-        N21 = 0.5 * sp.exp(-1j * (k1 + k_sub) * a) * (1.0 - k1 / k_sub)
-        N22 = 0.5 * sp.exp(-1j * (k1 - k_sub) * a) * (1.0 + k1 / k_sub)
-    else:
-        N11 = 0.5 * sp.exp(1j * (k1 - k_sub) * a) * (1.0 + (
-            (n_sub ** 2) / (n1 ** 2)) * k1 / k_sub)
-        N12 = 0.5 * sp.exp(1j * (k1 + k_sub) * a) * (1.0 - (
-            (n_sub ** 2) / (n1 ** 2)) * k1 / k_sub)
-        N21 = 0.5 * sp.exp(-1j * (k1 + k_sub) * a) * (1.0 - (
-            (n_sub ** 2) / (n1 ** 2)) * k1 / k_sub)
-        N22 = 0.5 * sp.exp(-1j * (k1 - k_sub) * a) * (1.0 + (
-            (n_sub ** 2) / (n1 ** 2)) * k1 / k_sub)
+    # matrix
+    N11 = sp.exp(1j * k_sub * L) * (1.0 + k1 / k_sub)
+    N12 = sp.exp(1j * k_sub * L) * (1.0 - k1 / k_sub)
+    N21 = sp.exp(-1j * k_sub * L) * (1.0 - k1 / k_sub)
+    N22 = sp.exp(-1j * k_sub * L) * (1.0 + k1 / k_sub)
 
-    return np.array([[N11, N12], [N21, N22]])
+    return 0.5 * np.array([[N11, N12], [N21, N22]])
 
 
 # total stack operator
-def f_T(a, b, n1, n2, n_inc, n_sub, N, omega, beta, pol):
+def f_T(a, b, n1, n2, n_inc, n_sub, N, omega, beta):
     '''Evaluates additional operator for the substrate
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (b is the first thickness, a the second)
     'n1,n2,n_inc,n_sub'=Refractive index of the unit cell (n2 is the first, n1 the second) and of incident medium and substrate
     'N'=total number of unit cells
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
     # preliminary calculations
-    m_M = f_M(n1, n_inc, omega, beta, pol)
-    m_A = f_A(a, b, n1, n2, N, omega, beta, pol)
-    m_N = f_N(a, n1, n_sub, omega, beta, pol)
+    m_M = f_M(n1, n_inc, omega, beta)
+    m_A = f_A(a, b, n1, n2, N, omega, beta)
+    m_N = f_N(a, n1, n_sub, omega, beta)
 
     # print 'm_M',m_M,m_M.shape
     # print 'm_A',m_A,m_A.shape
@@ -238,19 +202,18 @@ def f_T(a, b, n1, n2, n_inc, n_sub, N, omega, beta, pol):
 
 
 # reflectance for symmetric structures
-def rN_sym(a, b, n1, n2, N, omega, beta, pol):
+def rN_sym(a, b, n1, n2, N, omega, beta):
     '''Evaluates the reflectance for a symmetric structure
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (b is the first thickness, a the second)
     'n1,n2'=Refractive index of the unit cell (n2 is the first, n1 the second)
     'N'=total number of unit cells
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
     # preliminary calculations
-    A, B, C, D = ABCD(a, b, n1, n2, omega, beta, pol)
-    K = f_K(a, b, n1, n2, omega, beta, pol)
+    A, B, C, D = ABCD(a, b, n1, n2, omega, beta)
+    K = f_K(a, b, n1, n2, omega, beta)
     L = a + b
 
     return (np.abs(C) ** 2) / (np.abs(C) ** 2 + np.abs(
@@ -258,18 +221,17 @@ def rN_sym(a, b, n1, n2, N, omega, beta, pol):
 
 
 # reflectance in the omega beta space
-def rN(a, b, n1, n2, n_inc, n_sub, N, omega, beta, pol):
+def rN(a, b, n1, n2, n_inc, n_sub, N, omega, beta):
     '''Evaluates the reflectance for a general structure in the omega beta space
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (b is the first thickness, a the second)
     'n1,n2,n_inc,n_sub'=Refractive index of the unit cell (n2 is the first, n1 the second) and of incident medium and substrate
     'N'=total number of unit cells
-    'omega'=light frequency in rad/s
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'omega'=light frequency in rad/s '''
 
     # preliminary calculations
-    m_T = f_T(a, b, n1, n2, n_inc, n_sub, N, omega, beta, pol)
+    m_T = f_T(a, b, n1, n2, n_inc, n_sub, N, omega, beta)
     T21 = m_T[1, 0]
     T11 = m_T[0, 0]
 
@@ -277,20 +239,19 @@ def rN(a, b, n1, n2, n_inc, n_sub, N, omega, beta, pol):
 
 
 # reflectance in the lambda theta space
-def rN_lt(a, b, n1, n2, n_inc, n_sub, N, wl, theta, pol):
-    '''Evaluates the reflectance for a general structure in the omega beta space
+def rN_lambda_theta(a, b, n1, n2, n_inc, n_sub, N, wl, theta, pol):
+    '''Evaluates the reflectance for a general structure in the lambda theta space
 
     args:
     'a,b'=Thicknesses of the 1D unit cell (a is the first thickness, b the second)
     'n1,n2,n_inc,n_sub'=Refractive index of the unit cell (n1 is the first, n2 the second) and of incident medium and substrate
     'N'=total number of unit cells
     'wl'=light wavelength in nm
-    'theta'=incident angle in degrees
-    'pol'=polarization flag to be 0=TE or 1='TM' '''
+    'theta'=incident angle in degrees '''
 
     # Calculations
     m_T = f_T(b, a, n2, n1, n_inc, n_sub, N, f_omega(wl), f_beta(
-        n_inc, wl, np.pi * theta / 180.0), pol)
+        n_inc, wl, np.pi * theta / 180.0))
     T21 = m_T[1, 0]
     T11 = m_T[0, 0]
 
