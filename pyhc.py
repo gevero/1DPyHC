@@ -168,7 +168,7 @@ def f_N(a, b, n1, n_sub, omega, beta):
     N21 = sp.exp(-1j * k_sub * L) * (1.0 - k1 / k_sub)
     N22 = sp.exp(-1j * k_sub * L) * (1.0 + k1 / k_sub)
 
-    return 0.5 * np.array([[N11, N12], [N21, N22]])
+    return 0.5 * np.linalg.inv(np.array([[N11, N12], [N21, N22]]))
 
 
 # total stack operator
@@ -184,7 +184,7 @@ def f_T(a, b, n1, n2, n_inc, n_sub, N, omega, beta):
     # preliminary calculations
     m_M = f_M(n1, n_inc, omega, beta)
     m_A = f_A(a, b, n1, n2, N, omega, beta)
-    m_N = f_N(a, n1, n_sub, omega, beta)
+    m_N = f_N(a, b, n1, n_sub, omega, beta)
 
     # print 'm_M',m_M,m_M.shape
     # print 'm_A',m_A,m_A.shape
@@ -239,7 +239,7 @@ def rN(a, b, n1, n2, n_inc, n_sub, N, omega, beta):
 
 
 # reflectance in the lambda theta space
-def rN_lambda_theta(a, b, n1, n2, n_inc, n_sub, N, wl, theta, pol):
+def rN_lambda_theta(a, b, n1, n2, n_inc, n_sub, N, wl, theta):
     '''Evaluates the reflectance for a general structure in the lambda theta space
 
     args:
