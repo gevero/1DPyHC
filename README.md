@@ -1,5 +1,7 @@
 # 1DPyHC
 
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/gevero/1DPyHC)
+
 <img src="https://github.com/gevero/1DPyHC/blob/master/images/bragg.png" width="600">
 
 A python code to calculate the optical properties of 1D Photonic Crystals. The code follows the guidelines outlined in:
